@@ -1,4 +1,7 @@
-# Furzan Ahmed — AI Engineer Portfolio
+<img width="1919" height="264" alt="image" src="https://github.com/user-attachments/assets/15566520-2ae1-428e-ba20-0a9075a12274" />
+
+
+# My Portfolio
 
 A single-page portfolio built with **Next.js 16 (App Router)**, **TypeScript**, and **Tailwind CSS**, styled to the **"Structured"** design system — a flat, editorial gallery aesthetic: putty-beige canvas, black ink accents, an oversized display serif, hairline borders, and zero gradients or shadows.
 
