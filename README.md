@@ -13,7 +13,7 @@ npm install
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000).
+Check it out 😀 [https://furzan-portfolio.vercel.app/).
 
 
 Built with ❤️
