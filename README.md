@@ -13,7 +13,7 @@ npm install
 npm run dev
 ```
 
-Check it out 😀 [https://furzan-portfolio.vercel.app/).
+Check it out 😀 https://furzan-portfolio.vercel.app/
 
 
 Built with ❤️
