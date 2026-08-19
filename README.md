@@ -1,4 +1,5 @@
-<img width="1919" height="264" alt="image" src="https://github.com/user-attachments/assets/15566520-2ae1-428e-ba20-0a9075a12274" />
+<img width="1885" height="458" alt="linkedin banner3" src="https://github.com/user-attachments/assets/8da5d793-0de5-498f-96d8-5543041147af" />
+
 
 
 # My Portfolio
