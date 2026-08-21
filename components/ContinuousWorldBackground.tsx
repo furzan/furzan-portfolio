@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 import Image from "next/image";
 
 interface Cloud {
@@ -25,11 +25,21 @@ interface Particle {
 }
 
 export default function ContinuousWorldBackground() {
-  const [scrollY, setScrollY] = useState(0);
   const [reducedMotion, setReducedMotion] = useState(false);
   const [mounted, setMounted] = useState(false);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const rafRef = useRef<number>(0);
+
+  // ---- Refs for scroll-driven DOM manipulation (no React re-renders) ----
+  const scrollYRef = useRef(0);
+  const scrollRafRef = useRef<number>(0);
+  const maxScrollRef = useRef(3600);
+
+  // DOM element refs for direct style manipulation
+  const ambientGradientRef = useRef<HTMLDivElement>(null);
+  const farLayerRef = useRef<HTMLDivElement>(null);
+  const midLayerRef = useRef<HTMLDivElement>(null);
+  const envRefs = useRef<(HTMLDivElement | null)[]>([]);
 
   useEffect(() => {
     setMounted(true);
@@ -47,18 +57,99 @@ export default function ContinuousWorldBackground() {
     return () => mediaQuery.removeEventListener("change", handleChange);
   }, []);
 
-  // Track scroll position for continuous parallax
+  // ---- Scroll-driven parallax & cross-fade via direct DOM updates ----
+  const updateParallax = useCallback(() => {
+    const scrollY = scrollYRef.current;
+    const maxScroll = maxScrollRef.current;
+    const progress = Math.min(1, Math.max(0, scrollY / maxScroll));
+    const vhHeight = window.innerHeight;
+
+    // Parallax offsets
+    const farOffset = reducedMotion ? 0 : Math.min(scrollY * 0.04, vhHeight * 0.3);
+    const midOffset = reducedMotion ? 0 : Math.min(scrollY * 0.08, vhHeight * 0.5);
+    const depthScale = reducedMotion ? 1 : 1 + Math.sin(scrollY * 0.0008) * 0.02;
+
+    // Update parallax layer transforms directly
+    if (farLayerRef.current) {
+      farLayerRef.current.style.transform = `translate3d(0, ${-farOffset}px, 0) scale(${depthScale})`;
+    }
+    if (midLayerRef.current) {
+      midLayerRef.current.style.transform = `translate3d(0, ${-midOffset}px, 0) scale(${depthScale})`;
+    }
+
+    // Update ambient gradient
+    if (ambientGradientRef.current) {
+      ambientGradientRef.current.style.background =
+        progress < 0.25
+          ? "radial-gradient(ellipse at top, #2d2015 0%, #160f0a 80%)"
+          : progress < 0.65
+          ? "radial-gradient(ellipse at center, #2b1d12 0%, #140d08 80%)"
+          : "radial-gradient(ellipse at bottom, #3a2215 0%, #160c07 80%)";
+    }
+
+    // Environment cross-fade opacities
+    const opacities = [
+      Math.max(0, 1 - progress * 5),
+      Math.max(0, Math.min(1, 1 - Math.abs(progress - 0.20) * 5)),
+      Math.max(0, Math.min(1, 1 - Math.abs(progress - 0.40) * 5)),
+      Math.max(0, Math.min(1, 1 - Math.abs(progress - 0.60) * 5)),
+      Math.max(0, Math.min(1, 1 - Math.abs(progress - 0.80) * 5)),
+      Math.max(0, Math.min(1, (progress - 0.70) * 5)),
+    ];
+
+    // Apply opacities directly to DOM elements
+    for (let i = 0; i < opacities.length; i++) {
+      const el = envRefs.current[i];
+      if (el) {
+        el.style.opacity = String(opacities[i]);
+      }
+    }
+
+    // Also update the sky layer (env0 in the far layer)
+    const skyEl = envRefs.current[6]; // index 6 = sky
+    if (skyEl) {
+      skyEl.style.opacity = String(opacities[0]);
+    }
+
+    scrollRafRef.current = 0;
+  }, [reducedMotion]);
+
   useEffect(() => {
     if (reducedMotion) return;
 
+    // Cache maxScroll once and on resize
+    function updateMaxScroll() {
+      maxScrollRef.current = Math.max(1, document.body.scrollHeight - window.innerHeight);
+    }
+    updateMaxScroll();
+
     function handleScroll() {
-      setScrollY(window.scrollY);
+      scrollYRef.current = window.scrollY;
+      // Coalesce scroll updates into a single RAF
+      if (!scrollRafRef.current) {
+        scrollRafRef.current = requestAnimationFrame(updateParallax);
+      }
+    }
+
+    function handleResize() {
+      updateMaxScroll();
+      handleScroll();
     }
 
     window.addEventListener("scroll", handleScroll, { passive: true });
+    window.addEventListener("resize", handleResize, { passive: true });
+
+    // Initial paint
     handleScroll();
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, [reducedMotion]);
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      window.removeEventListener("resize", handleResize);
+      if (scrollRafRef.current) {
+        cancelAnimationFrame(scrollRafRef.current);
+      }
+    };
+  }, [reducedMotion, updateParallax]);
 
   // Atmospheric Animation Canvas (Clouds, Embers, Leaves, Torch Halos)
   useEffect(() => {
@@ -216,23 +307,10 @@ export default function ContinuousWorldBackground() {
     };
   }, [reducedMotion, mounted]);
 
-  // Calculate environmental cross-fade opacities based on scroll position
-  const maxScroll = typeof window !== "undefined" ? Math.max(1, document.body.scrollHeight - window.innerHeight) : 3600;
-  const progress = Math.min(1, Math.max(0, scrollY / maxScroll));
-
-  // Opacities for 6 environments along scroll journey
-  const env0Opacity = Math.max(0, 1 - progress * 5);
-  const env1Opacity = Math.max(0, Math.min(1, 1 - Math.abs(progress - 0.20) * 5));
-  const env2Opacity = Math.max(0, Math.min(1, 1 - Math.abs(progress - 0.40) * 5));
-  const env3Opacity = Math.max(0, Math.min(1, 1 - Math.abs(progress - 0.60) * 5));
-  const env4Opacity = Math.max(0, Math.min(1, 1 - Math.abs(progress - 0.80) * 5));
-  const env5Opacity = Math.max(0, Math.min(1, (progress - 0.70) * 5));
-
-  // Parallax offsets (Far, Mid, Foreground) with height safety bounds
-  const vhHeight = typeof window !== "undefined" ? window.innerHeight : 900;
-  const farOffset = reducedMotion ? 0 : Math.min(scrollY * 0.04, vhHeight * 0.3);
-  const midOffset = reducedMotion ? 0 : Math.min(scrollY * 0.08, vhHeight * 0.5);
-  const depthScale = reducedMotion ? 1 : 1 + Math.sin(scrollY * 0.0008) * 0.02;
+  // Ref callback helper for environment image containers
+  const setEnvRef = useCallback((index: number) => (el: HTMLDivElement | null) => {
+    envRefs.current[index] = el;
+  }, []);
 
   return (
     <div
@@ -242,14 +320,10 @@ export default function ContinuousWorldBackground() {
     >
       {/* Dynamic Ambient Background Color Gradient that shifts with progress */}
       <div
-        className="absolute inset-0 transition-colors duration-700"
+        ref={ambientGradientRef}
+        className="absolute inset-0"
         style={{
-          background:
-            progress < 0.25
-              ? "radial-gradient(ellipse at top, #2d2015 0%, #160f0a 80%)"
-              : progress < 0.65
-              ? "radial-gradient(ellipse at center, #2b1d12 0%, #140d08 80%)"
-              : "radial-gradient(ellipse at bottom, #3a2215 0%, #160c07 80%)",
+          background: "radial-gradient(ellipse at top, #2d2015 0%, #160f0a 80%)",
         }}
       />
 
@@ -257,16 +331,19 @@ export default function ContinuousWorldBackground() {
       {/* PARALLAX LAYER 1: FAR SKY & DISTANT MOUNTAINS                   */}
       {/* ---------------------------------------------------------------- */}
       <div
-        className="absolute inset-0 h-[160vh] w-full transition-transform duration-75 ease-out"
+        ref={farLayerRef}
+        className="absolute inset-0 h-[160vh] w-full"
         style={{
-          transform: `translate3d(0, ${-farOffset}px, 0) scale(${depthScale})`,
+          transform: "translate3d(0, 0px, 0) scale(1)",
+          willChange: "transform",
           filter: "contrast(1.06) saturate(1.1)",
         }}
       >
         {/* Castle Sky */}
         <div
-          className="absolute inset-0 transition-opacity duration-700"
-          style={{ opacity: env0Opacity }}
+          ref={setEnvRef(6)}
+          className="absolute inset-0"
+          style={{ opacity: 1, willChange: "opacity" }}
         >
           <Image
             src="/assets/medieval/hero/sky.png"
@@ -283,16 +360,19 @@ export default function ContinuousWorldBackground() {
       {/* PARALLAX LAYER 2: MIDGROUND LANDSCAPES (CROSS-FADING JOURNEY)    */}
       {/* ---------------------------------------------------------------- */}
       <div
-        className="absolute inset-0 h-[160vh] w-full transition-transform duration-75 ease-out"
+        ref={midLayerRef}
+        className="absolute inset-0 h-[160vh] w-full"
         style={{
-          transform: `translate3d(0, ${-midOffset}px, 0) scale(${depthScale})`,
+          transform: "translate3d(0, 0px, 0) scale(1)",
+          willChange: "transform",
           filter: "contrast(1.08) saturate(1.12)",
         }}
       >
         {/* Environment 0: Hero Castle Kingdom */}
         <div
-          className="absolute inset-0 transition-opacity duration-700"
-          style={{ opacity: env0Opacity }}
+          ref={setEnvRef(0)}
+          className="absolute inset-0"
+          style={{ opacity: 1, willChange: "opacity" }}
         >
           <Image
             src="/assets/medieval/hero/castle.png"
@@ -305,8 +385,9 @@ export default function ContinuousWorldBackground() {
 
         {/* Environment 1: About Enchanted Forest */}
         <div
-          className="absolute inset-0 transition-opacity duration-700"
-          style={{ opacity: env1Opacity }}
+          ref={setEnvRef(1)}
+          className="absolute inset-0"
+          style={{ opacity: 0, willChange: "opacity" }}
         >
           <Image
             src="/assets/medieval/about/forest.png"
@@ -319,8 +400,9 @@ export default function ContinuousWorldBackground() {
 
         {/* Environment 2: Skills Fantasy Tavern */}
         <div
-          className="absolute inset-0 transition-opacity duration-700"
-          style={{ opacity: env2Opacity }}
+          ref={setEnvRef(2)}
+          className="absolute inset-0"
+          style={{ opacity: 0, willChange: "opacity" }}
         >
           <Image
             src="/assets/medieval/skills/tavern.png"
@@ -333,8 +415,9 @@ export default function ContinuousWorldBackground() {
 
         {/* Environment 3: Projects Alchemy Laboratory */}
         <div
-          className="absolute inset-0 transition-opacity duration-700"
-          style={{ opacity: env3Opacity }}
+          ref={setEnvRef(3)}
+          className="absolute inset-0"
+          style={{ opacity: 0, willChange: "opacity" }}
         >
           <Image
             src="/assets/medieval/projects/lab.png"
@@ -347,8 +430,9 @@ export default function ContinuousWorldBackground() {
 
         {/* Environment 4: Grand Stained-Glass Observatory Hall */}
         <div
-          className="absolute inset-0 transition-opacity duration-700"
-          style={{ opacity: env4Opacity }}
+          ref={setEnvRef(4)}
+          className="absolute inset-0"
+          style={{ opacity: 0, willChange: "opacity" }}
         >
           <Image
             src="/assets/medieval/observatory.png"
@@ -361,8 +445,9 @@ export default function ContinuousWorldBackground() {
 
         {/* Environment 5: Contact & Footer Sunset Courtyard */}
         <div
-          className="absolute inset-0 transition-opacity duration-700"
-          style={{ opacity: env5Opacity }}
+          ref={setEnvRef(5)}
+          className="absolute inset-0"
+          style={{ opacity: 0, willChange: "opacity" }}
         >
           <Image
             src="/assets/medieval/contact/sunset.png"
@@ -385,3 +470,4 @@ export default function ContinuousWorldBackground() {
     </div>
   );
 }
+
