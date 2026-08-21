@@ -1,32 +1,120 @@
 // Central content file — edit this to update copy across the whole site.
-// All facts below are pulled from https://github.com/furzan (profile README + pinned repos).
+// All facts below are pulled from Furzan Ahmed's CV and https://github.com/furzan.
 
 export const profile = {
   name: "Furzan",
   fullName: "Furzan Ahmed",
   role: "AI Engineer & CS Graduate",
   location: "Karachi, Pakistan",
+  phone: "0334-1220865",
   education: "FAST NUCES — BS Computer Science",
   gpa: "3.57 CGPA · Dean's List ×6",
   email: "furzanahmed07@gmail.com",
   github: "https://github.com/furzan",
   linkedin: "https://linkedin.com/in/furzan-ahmed-b596a1299",
-  // Swap this for a local file in /public (e.g. "/headshot.jpg") if you'd rather
-  // not use your live GitHub avatar.
   avatar: "https://avatars.githubusercontent.com/u/156594010?v=4",
   heroSubhead:
-    "AI Engineer from Karachi building agentic systems — voice agents, multi-agent pipelines, and RAG that hold up outside a demo. CS grad turning research-grade ML into shipped, production software.",
+    "AI Engineer from FAST NUCES building agentic systems — voice AI agents, multimodal RAG pipelines, and multi-agent developer tools. CS graduate turning research-grade ML into production software.",
   bioParagraphs: [
-    "I'm a Computer Science graduate from FAST NUCES Karachi, where I closed out with a 3.57 CGPA and landed on the Dean's List six times. Formal training in algorithms, systems, and data structures gave me the foundation; building things I actually wanted to exist is what pulled me toward AI.",
-    "My focus lately is agentic AI — voice agents, multi-agent pipelines, and retrieval-augmented systems that are genuinely useful, not just demos. I've interned at 10Pearls and Planet01, shipping real features across backend and frontend, and I care about clean architecture as much as the model in the loop.",
+    "I'm a Computer Science graduate from FAST NUCES Karachi (3.57 CGPA, Dean's List for 6 semesters) with hands-on experience in AI/ML engineering and full-stack development. Formal training in algorithms, systems, and software engineering gave me the foundation; building autonomous AI agents and intelligent workflows is what drives my work.",
+    "I've interned at Unikrew Solutions, 10Pearls, and Planet01 — engineering autonomous CLI tools, full-stack REST services with JWT auth & SQL databases, and responsive frontends. I specialize in LLMs, RAG, LangGraph, LangChain, OpenAI Agents SDK with MCP, vector databases, and real-time voice streaming with WebRTC.",
   ],
 };
 
 export const stats = [
   { label: "Public Repos", value: "22+" },
   { label: "Dean's List", value: "×6" },
-  { label: "Internships", value: "2" },
-  { label: "Focus", value: "Agentic AI" },
+  { label: "Internships", value: "3" },
+  { label: "CGPA", value: "3.57" },
+];
+
+export type Experience = {
+  company: string;
+  role: string;
+  period: string;
+  description: string;
+  highlights: string[];
+  tags: string[];
+};
+
+export const experiences: Experience[] = [
+  {
+    company: "Unikrew Solutions",
+    role: "AI Intern",
+    period: "Jun 2026 – Present",
+    description:
+      "Developing an autonomous AI Coding Agent & CLI tool using TypeScript, Node.js, and LLM APIs.",
+    highlights: [
+      "Implemented function calling and tool execution workflows for code synthesis",
+      "Built context management & interactive terminal interfaces",
+      "Integrated LLM APIs for autonomous agentic developer workflows",
+    ],
+    tags: ["TypeScript", "Node.js", "LLM APIs", "CLI", "Function Calling"],
+  },
+  {
+    company: "10Pearls",
+    role: "MERN Stack Intern",
+    period: "Dec 2025 – Feb 2026",
+    description:
+      "Built a full-stack MERN app with JWT auth, REST APIs, and MySQL persistence adhering to strict code quality standards.",
+    highlights: [
+      "Integrated Pino logging, unit testing (Jest/Mocha), and SonarQube quality gates",
+      "Designed structured Git workflows and clean RESTful API architecture",
+      "Handled database modeling, security, and state management",
+    ],
+    tags: ["MERN", "TypeScript", "MySQL", "JWT", "Jest", "Pino", "SonarQube"],
+  },
+  {
+    company: "Planet01",
+    role: "Backend Intern",
+    period: "July 2025 – Aug 2025",
+    description:
+      "Developed RESTful backend services with Node.js/Express and MySQL (Sequelize).",
+    highlights: [
+      "Integrated backend services with Vue.js frontend for end-to-end feature delivery",
+      "Optimized query performance and database access layers",
+    ],
+    tags: ["Node.js", "Express", "MySQL", "Sequelize", "Vue.js", "REST APIs"],
+  },
+  {
+    company: "Planet01",
+    role: "Frontend Intern",
+    period: "June 2024 – Aug 2024",
+    description:
+      "Built responsive user interfaces using Vue.js, JavaScript, HTML, and CSS.",
+    highlights: [
+      "Achieved iterative UI/UX improvements through team code reviews",
+      "Created modular, accessible components for web applications",
+    ],
+    tags: ["Vue.js", "JavaScript", "HTML/CSS", "UI/UX", "Code Review"],
+  },
+];
+
+export type Education = {
+  institution: string;
+  degree: string;
+  location: string;
+  period: string;
+  gpaOrGrade: string;
+  honors?: string;
+};
+
+export const educationList: Education[] = [
+  {
+    institution: "FAST NUCES",
+    degree: "Bachelor of Science in Computer Science",
+    location: "Karachi, Pakistan",
+    period: "Aug 2022 – May 2026",
+    gpaOrGrade: "CGPA: 3.57",
+    honors: "Dean's List (6 Semesters)",
+  },
+  {
+    institution: "Nixor College",
+    degree: "A Levels",
+    location: "Karachi, Pakistan",
+    period: "Aug 2020 – May 2022",
+    gpaOrGrade: "2A*, 2A",
+  },
 ];
 
 export type SkillGroup = {
@@ -37,50 +125,62 @@ export type SkillGroup = {
 
 export const skillGroups: SkillGroup[] = [
   {
-    title: "AI / ML",
-    blurb: "Where most of my time goes right now",
+    title: "AI / ML & Agents",
+    blurb: "LLM agents, RAG engines, and real-time voice AI",
     skills: [
       "Python",
-      "PyTorch",
-      "TensorFlow",
       "LangChain",
       "LangGraph",
-      "OpenAI SDK",
+      "OpenAI Agents SDK",
+      "MCP Protocol",
       "Pinecone",
-      "Groq",
+      "Groq (Llama 3.3)",
+      "FastAPI",
+      "Pipecat / WebRTC",
+      "Deepgram / Cartesia",
+      "Tesseract OCR / Poppler",
       "Streamlit",
     ],
   },
   {
-    title: "Full-Stack",
-    blurb: "For shipping the product around the model",
+    title: "Full-Stack & CLI",
+    blurb: "Production APIs, autonomous CLI tools & responsive UIs",
     skills: [
       "TypeScript",
       "JavaScript",
-      "React",
-      "Next.js",
       "Node.js",
       "Express",
-      "Vue",
+      "React",
+      "Next.js",
+      "Vue.js",
+      "REST APIs",
+      "HTML / CSS",
       "Tailwind CSS",
     ],
   },
   {
-    title: "Databases & Auth",
-    blurb: "Where the state actually lives",
-    skills: ["PostgreSQL", "MySQL", "SQLite", "Sequelize", "JWT"],
+    title: "Databases & State",
+    blurb: "Vector stores, SQL/NoSQL & auth mechanisms",
+    skills: [
+      "PostgreSQL (SQLModel)",
+      "MySQL (Sequelize)",
+      "Redis (Semantic Cache)",
+      "Pinecone Vector DB",
+      "SQLite",
+      "JWT Auth",
+    ],
   },
   {
-    title: "DevOps & Tools",
-    blurb: "Keeping it reliable from laptop to prod",
+    title: "DevOps & Engineering",
+    blurb: "Testing, logging, CI/CD & code quality tools",
     skills: [
-      "Git",
-      "GitHub Actions",
+      "Git & GitHub API",
       "Docker",
       "Linux",
+      "Jest / Mocha",
+      "Pino Logger",
+      "SonarQube",
       "Postman",
-      "Figma",
-      "VS Code",
     ],
   },
 ];
@@ -96,54 +196,46 @@ export type Project = {
 
 export const projects: Project[] = [
   {
-    title: "Food Ordering Voice Agent",
+    title: "AI-Powered Food Ordering Voice Agent",
     description:
-      "A real-time voice AI that lets customers browse a menu, place an order, and pay entirely through natural conversation — no screen required.",
-    tags: ["Python", "Pipecat", "WebRTC", "FastAPI", "PostgreSQL"],
+      "A real-time voice AI agent that lets users browse a menu, manage their cart, and place orders through natural conversation. Built with Pipecat pipeline (Deepgram STT, Cartesia TTS, Silero VAD), Gemini for intent handling, OpenAI Agents SDK with MCP, FastAPI, PostgreSQL (SQLModel), WebRTC audio, and JWT auth.",
+    tags: ["Pipecat", "WebRTC", "FastAPI", "PostgreSQL", "OpenAI SDK", "MCP"],
     href: "https://github.com/furzan/Food-Ordering-Voice-Agent",
     area: "a",
     featured: true,
   },
   {
-    title: "Agentic PR Reviewer",
+    title: "Multimodal RAG System",
     description:
-      "A multi-agent system that reviews GitHub pull requests on its own — flagging bugs, security gaps, and performance issues before a human has to.",
-    tags: ["LangGraph", "LangChain", "Groq", "FastAPI"],
-    href: "https://github.com/furzan/Agentic-PR-Reviewer",
+      "Multimodal RAG engine extracting text, tables, and images from PDFs using Tesseract OCR, Poppler, Unstructured, and Gemini vision summaries indexed in Pinecone. Features FastAPI backend with Redis semantic caching, LangChain + Groq (Llama 3.3), and a Streamlit UI.",
+    tags: ["RAG", "FastAPI", "Pinecone", "Redis", "LangChain", "Groq"],
+    href: "https://github.com/furzan/Multimodal-RAG-System",
     area: "b",
     featured: true,
   },
   {
-    title: "RAG Medical ChatBot",
+    title: "Agentic PR Reviewer",
     description:
-      "Retrieval-augmented Q&A over medical PDFs, pairing Gemini embeddings with a Pinecone vector store and Llama 3.3 for grounded, citation-backed answers.",
-    tags: ["RAG", "Pinecone", "LangChain", "Llama 3.3"],
-    href: "https://github.com/furzan/RAG-Medical-ChatBot",
+      "Multi-agent AI system that reviews GitHub PRs for security vulnerabilities, performance issues, and bugs using a parallel LangGraph pipeline with a critique gate for quality control, posting structured feedback directly as PR comments.",
+    tags: ["LangGraph", "LangChain", "Groq", "FastAPI", "GitHub API"],
+    href: "https://github.com/furzan/Agentic-PR-Reviewer",
     area: "c",
   },
   {
     title: "Weather & AQI Predictor",
     description:
-      "ML forecasting for Karachi's weather and air quality three days out, with a fully automated CI/CD pipeline that retrains on fresh data.",
+      "ML forecasting for Karachi's weather and air quality three days out, with a fully automated CI/CD pipeline that retrains models on fresh data.",
     tags: ["Python", "Scikit-Learn", "Streamlit", "GH Actions"],
     href: "https://github.com/furzan/Weather_AQI_Predictor",
     area: "d",
   },
   {
-    title: "Notes Manager — MERN",
-    description:
-      "A secure, full-stack notes app with JWT authentication, rich-text editing, and automated password recovery on a React + Sequelize/MySQL stack.",
-    tags: ["TypeScript", "React", "Node.js", "MySQL"],
-    href: "https://github.com/furzan/Furzan-mern-10pshine",
-    area: "e",
-  },
-  {
     title: "Smart Lunch Backend",
     description:
-      "A team lunch-ordering API — voting, restaurants, a shared balance pool, and role-based access, built on Express and Sequelize.",
-    tags: ["JavaScript", "Express", "Sequelize", "JWT"],
+      "A team lunch-ordering REST API featuring voting, restaurant management, shared balance pool, and role-based access control built on Express and Sequelize MySQL.",
+    tags: ["JavaScript", "Express", "Sequelize", "MySQL", "JWT"],
     href: "https://github.com/furzan/smart-lunch-backend",
-    area: "f",
+    area: "e",
   },
 ];
 
@@ -154,24 +246,24 @@ export type FocusArea = {
 
 export const focusAreas: FocusArea[] = [
   {
-    title: "Agentic AI",
+    title: "Agentic AI & Voice Pipelines",
     description:
-      "Multi-agent pipelines that plan, call tools, and hand off work — LangGraph, LangChain, Groq.",
+      "Autonomous tools & multi-agent systems that plan, execute functions, and stream real-time audio via WebRTC.",
   },
   {
-    title: "Retrieval & RAG",
+    title: "Multimodal RAG Systems",
     description:
-      "Grounded, citation-backed answers over real documents — embeddings, vector stores, reranking.",
+      "Extracting text, tables & vision summaries from documents with vector search and Redis semantic caching.",
   },
   {
-    title: "Full-Stack Systems",
+    title: "Full-Stack AI Architecture",
     description:
-      "The product around the model — APIs, auth, and databases that hold up in production.",
+      "Production-grade APIs, JWT auth, database persistence, and clean software standards around LLM models.",
   },
 ];
 
 export const pullQuote =
-  "I treat a model the same way I treat a database — powerful, but only as good as the system built around it.";
+  "I treat an AI model the same way I treat a database — powerful, but only as good as the software architecture built around it.";
 
 export const navLinks = [
   { label: "About", href: "#about" },

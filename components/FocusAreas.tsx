@@ -1,32 +1,35 @@
 "use client";
 
+import { Bot, FileSearch, Layers, Sparkles, Cpu, Database } from "lucide-react";
 import Hexagon from "@/components/Hexagon";
 import ScrollReveal from "@/components/ScrollReveal";
 import { focusAreas } from "@/lib/data";
 
-const icons: Record<string, JSX.Element> = {
+// Fallback/index-based icon list to ensure icons ALWAYS render regardless of title strings
+const defaultIcons = [
+  <Bot key="bot" className="h-10 w-10 text-[#d4b483] transition-transform duration-300 group-hover:scale-110" />,
+  <FileSearch key="search" className="h-10 w-10 text-[#d4b483] transition-transform duration-300 group-hover:scale-110" />,
+  <Layers key="layers" className="h-10 w-10 text-[#d4b483] transition-transform duration-300 group-hover:scale-110" />,
+];
+
+const titleIconMap: Record<string, JSX.Element> = {
+  "Agentic AI & Voice Pipelines": (
+    <Bot className="h-10 w-10 text-[#d4b483]" />
+  ),
   "Agentic AI": (
-    <svg width="44" height="44" viewBox="0 0 44 44" fill="none" aria-hidden>
-      <circle cx="22" cy="10" r="4" stroke="#ffffff" strokeWidth="1" />
-      <circle cx="10" cy="32" r="4" stroke="#ffffff" strokeWidth="1" />
-      <circle cx="34" cy="32" r="4" stroke="#ffffff" strokeWidth="1" />
-      <path d="M19 13.5L12.5 28.5M25 13.5L31.5 28.5M14 32H30" stroke="#ffffff" strokeWidth="1" />
-    </svg>
+    <Bot className="h-10 w-10 text-[#d4b483]" />
+  ),
+  "Multimodal RAG Systems": (
+    <FileSearch className="h-10 w-10 text-[#d4b483]" />
   ),
   "Retrieval & RAG": (
-    <svg width="44" height="44" viewBox="0 0 44 44" fill="none" aria-hidden>
-      <rect x="10" y="7" width="18" height="24" stroke="#ffffff" strokeWidth="1" />
-      <path d="M14 14H24M14 19H24M14 24H20" stroke="#ffffff" strokeWidth="1" />
-      <circle cx="29" cy="30" r="6" stroke="#ffffff" strokeWidth="1" />
-      <path d="M33.2 34.2L38 39" stroke="#ffffff" strokeWidth="1" />
-    </svg>
+    <FileSearch className="h-10 w-10 text-[#d4b483]" />
+  ),
+  "Full-Stack AI Architecture": (
+    <Layers className="h-10 w-10 text-[#d4b483]" />
   ),
   "Full-Stack Systems": (
-    <svg width="44" height="44" viewBox="0 0 44 44" fill="none" aria-hidden>
-      <rect x="9" y="9" width="26" height="9" stroke="#ffffff" strokeWidth="1" />
-      <rect x="9" y="18" width="26" height="9" stroke="#ffffff" strokeWidth="1" />
-      <rect x="9" y="27" width="26" height="8" stroke="#ffffff" strokeWidth="1" />
-    </svg>
+    <Layers className="h-10 w-10 text-[#d4b483]" />
   ),
 };
 
@@ -42,28 +45,31 @@ export default function FocusAreas() {
         </ScrollReveal>
 
         <div className="mt-14 grid grid-cols-1 gap-8 sm:grid-cols-3">
-          {focusAreas.map((area, i) => (
-            <ScrollReveal
-              key={area.title}
-              delay={i * 150}
-              className="glass-panel flex flex-col items-center text-center p-8"
-            >
-              <p className="font-display text-subheading italic text-paper">
-                {area.title}
-              </p>
-              <div className="mt-6 flex h-[110px] w-[110px] items-center justify-center rounded-full border border-[#d4b483]/50 bg-[#160f0a]/60 backdrop-blur-sm transition-all duration-500 hover:border-paper hover:scale-105">
-                {icons[area.title]}
-              </div>
-              <p className="mt-6 max-w-[260px] font-body text-body-sm leading-relaxed text-[#e6d8c3]">
-                {area.description}
-              </p>
-              <div className="mt-6 flex items-center gap-3">
-                <Hexagon light filled className="hex-pulse" />
-                <Hexagon light />
-                <Hexagon light />
-              </div>
-            </ScrollReveal>
-          ))}
+          {focusAreas.map((area, i) => {
+            const icon = titleIconMap[area.title] || defaultIcons[i % defaultIcons.length];
+            return (
+              <ScrollReveal
+                key={area.title}
+                delay={i * 150}
+                className="group glass-panel flex flex-col items-center text-center p-8 hover:border-[#d4b483]/80 transition-all duration-300"
+              >
+                <p className="font-display text-subheading italic text-paper">
+                  {area.title}
+                </p>
+                <div className="mt-6 flex h-[110px] w-[110px] items-center justify-center rounded-full border border-[#d4b483]/50 bg-[#160f0a]/80 backdrop-blur-sm shadow-xl transition-all duration-500 group-hover:border-paper group-hover:scale-105 group-hover:bg-[#261b12]">
+                  {icon}
+                </div>
+                <p className="mt-6 max-w-[260px] font-body text-body-sm leading-relaxed text-[#e6d8c3]">
+                  {area.description}
+                </p>
+                <div className="mt-6 flex items-center gap-3">
+                  <Hexagon light filled className="hex-pulse" />
+                  <Hexagon light />
+                  <Hexagon light />
+                </div>
+              </ScrollReveal>
+            );
+          })}
         </div>
       </div>
     </section>

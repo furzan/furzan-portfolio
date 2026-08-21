@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, FormEvent } from "react";
-import { Github, Linkedin, Mail, ArrowUpRight } from "lucide-react";
+import { Github, Linkedin, Mail, Phone, ArrowUpRight } from "lucide-react";
 import ScrollReveal from "@/components/ScrollReveal";
 import { profile } from "@/lib/data";
 
@@ -9,6 +9,7 @@ const socials = [
   { label: "GitHub", href: profile.github, icon: Github },
   { label: "LinkedIn", href: profile.linkedin, icon: Linkedin },
   { label: "Email", href: `mailto:${profile.email}`, icon: Mail },
+  { label: profile.phone, href: `tel:${profile.phone.replace(/[^0-9+]/g, "")}`, icon: Phone },
 ];
 
 export default function Contact() {
@@ -36,9 +37,7 @@ export default function Contact() {
               Let&apos;s build something intelligent together.
             </h2>
             <p className="mt-4 sm:mt-6 max-w-md font-body text-body-sm leading-relaxed text-[#e6d8c3]">
-              I&apos;m actively looking for AI Engineer roles and always up for
-              talking agentic systems, RAG pipelines, or CS research. Drop a
-              line and I&apos;ll get back to you within a day or two.
+              I&apos;m targeting AI Engineer roles focused on building and deploying LLM powered products. Drop a line and I&apos;ll get back to you promptly.
             </p>
 
             <div className="mt-6 sm:mt-9 flex flex-wrap gap-4 sm:gap-6">
@@ -46,7 +45,7 @@ export default function Contact() {
                 <a
                   key={label}
                   href={href}
-                  target={label === "Email" ? undefined : "_blank"}
+                  target={label === "GitHub" || label === "LinkedIn" ? "_blank" : undefined}
                   rel="noreferrer"
                   className="flex items-center gap-2 transition-transform duration-300 hover:-translate-y-0.5"
                 >

@@ -220,16 +220,18 @@ export default function ContinuousWorldBackground() {
   const maxScroll = typeof window !== "undefined" ? Math.max(1, document.body.scrollHeight - window.innerHeight) : 3600;
   const progress = Math.min(1, Math.max(0, scrollY / maxScroll));
 
-  // Opacities for 5 environments along scroll journey
-  const env0Opacity = Math.max(0, 1 - progress * 4);
-  const env1Opacity = Math.max(0, Math.min(1, 1 - Math.abs(progress - 0.28) * 4));
-  const env2Opacity = Math.max(0, Math.min(1, 1 - Math.abs(progress - 0.52) * 4));
-  const env3Opacity = Math.max(0, Math.min(1, 1 - Math.abs(progress - 0.74) * 4));
-  const env4Opacity = Math.max(0, Math.min(1, (progress - 0.72) * 4));
+  // Opacities for 6 environments along scroll journey
+  const env0Opacity = Math.max(0, 1 - progress * 5);
+  const env1Opacity = Math.max(0, Math.min(1, 1 - Math.abs(progress - 0.20) * 5));
+  const env2Opacity = Math.max(0, Math.min(1, 1 - Math.abs(progress - 0.40) * 5));
+  const env3Opacity = Math.max(0, Math.min(1, 1 - Math.abs(progress - 0.60) * 5));
+  const env4Opacity = Math.max(0, Math.min(1, 1 - Math.abs(progress - 0.80) * 5));
+  const env5Opacity = Math.max(0, Math.min(1, (progress - 0.70) * 5));
 
-  // Parallax offsets (Far, Mid, Foreground)
-  const farOffset = reducedMotion ? 0 : scrollY * 0.05;
-  const midOffset = reducedMotion ? 0 : scrollY * 0.12;
+  // Parallax offsets (Far, Mid, Foreground) with height safety bounds
+  const vhHeight = typeof window !== "undefined" ? window.innerHeight : 900;
+  const farOffset = reducedMotion ? 0 : Math.min(scrollY * 0.04, vhHeight * 0.3);
+  const midOffset = reducedMotion ? 0 : Math.min(scrollY * 0.08, vhHeight * 0.5);
   const depthScale = reducedMotion ? 1 : 1 + Math.sin(scrollY * 0.0008) * 0.02;
 
   return (
@@ -243,11 +245,11 @@ export default function ContinuousWorldBackground() {
         className="absolute inset-0 transition-colors duration-700"
         style={{
           background:
-            progress < 0.3
+            progress < 0.25
               ? "radial-gradient(ellipse at top, #2d2015 0%, #160f0a 80%)"
-              : progress < 0.7
+              : progress < 0.65
               ? "radial-gradient(ellipse at center, #2b1d12 0%, #140d08 80%)"
-              : "radial-gradient(ellipse at bottom, #361f14 0%, #160c07 80%)",
+              : "radial-gradient(ellipse at bottom, #3a2215 0%, #160c07 80%)",
         }}
       />
 
@@ -255,7 +257,7 @@ export default function ContinuousWorldBackground() {
       {/* PARALLAX LAYER 1: FAR SKY & DISTANT MOUNTAINS                   */}
       {/* ---------------------------------------------------------------- */}
       <div
-        className="absolute inset-0 h-[120vh] w-full transition-transform duration-75 ease-out"
+        className="absolute inset-0 h-[160vh] w-full transition-transform duration-75 ease-out"
         style={{
           transform: `translate3d(0, ${-farOffset}px, 0) scale(${depthScale})`,
           filter: "contrast(1.06) saturate(1.1)",
@@ -281,7 +283,7 @@ export default function ContinuousWorldBackground() {
       {/* PARALLAX LAYER 2: MIDGROUND LANDSCAPES (CROSS-FADING JOURNEY)    */}
       {/* ---------------------------------------------------------------- */}
       <div
-        className="absolute inset-0 h-[128vh] w-full transition-transform duration-75 ease-out"
+        className="absolute inset-0 h-[160vh] w-full transition-transform duration-75 ease-out"
         style={{
           transform: `translate3d(0, ${-midOffset}px, 0) scale(${depthScale})`,
           filter: "contrast(1.08) saturate(1.12)",
@@ -343,10 +345,24 @@ export default function ContinuousWorldBackground() {
           />
         </div>
 
-        {/* Environment 4: Contact Sunset Courtyard */}
+        {/* Environment 4: Grand Stained-Glass Observatory Hall */}
         <div
           className="absolute inset-0 transition-opacity duration-700"
           style={{ opacity: env4Opacity }}
+        >
+          <Image
+            src="/assets/medieval/observatory.png"
+            alt=""
+            fill
+            sizes="100vw"
+            className="object-cover object-center opacity-85"
+          />
+        </div>
+
+        {/* Environment 5: Contact & Footer Sunset Courtyard */}
+        <div
+          className="absolute inset-0 transition-opacity duration-700"
+          style={{ opacity: env5Opacity }}
         >
           <Image
             src="/assets/medieval/contact/sunset.png"
